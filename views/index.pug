@@ -1,0 +1,19 @@
+extends templet
+
+mixin post(title, links)
+    .col-xl-3.col-lg-3.col-md-6.col-sm-12.col-12
+        .card
+            .card-header= title
+            .card-body
+                ul.list-group
+                    each link in links
+                        li.list-group-item(href=link.url)= link.title
+
+block append javascripts
+    script(src='/javascripts/list_click.js')
+
+block append contents
+    .container
+        .row
+            each result in results
+                +post(result.title, result.links)

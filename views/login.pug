@@ -1,0 +1,19 @@
+extends templet
+
+block append javascripts
+    script(src='/javascripts/list_click.js')
+
+block append contents
+    .container
+        .card
+            .card-header
+                | 로그인
+            .card-body
+                form
+                    .form-group
+                        label(for='generation') 학번
+                        input#generation.form-control(type='number', name='generation', aria-describedby='emailHelp', placeholder='학번을 입력해주세요')
+                    .form-group
+                        label(for='password') 비밀번호
+                        input#password.form-control(type='password', name='password' , placeholder='Password')
+                    button.btn.btn-primary.max(type='submit') 로그인

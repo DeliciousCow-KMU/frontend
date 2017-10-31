@@ -1,0 +1,22 @@
+nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-dark
+    a.navbar-brand(href='#') KMULife
+    button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNavDropdown', aria-controls='navbarNavDropdown', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+    #navbarNavDropdown.collapse.navbar-collapse
+        ul.navbar-nav.flex-row.ml-md-auto.d-none.d-md-flex
+            if auth
+                li.nav-item.dropdown
+                    a#profile_dropdown.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') 20163079 강동호
+                    .dropdown-menu(aria-labelledby='profile_dropdown')
+                        a.dropdown-item(href='#') 마이페이지
+                        a.dropdown-item(href='#')
+                            i.fa.fa-sign-out(aria-hidden='true')
+                            |  로그아웃
+                        a.dropdown-item(href='#')
+                            i.fa.fa-keyboard-o(aria-hidden='true')
+                            |  키워드 설정
+            else
+                li.nav-item.active
+                    a.nav-link(href='/login')
+                        i.fa.fa-sign-in(aria-hidden='true')
+                        |  로그인
