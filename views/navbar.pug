@@ -12,9 +12,9 @@ nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-dark
                         a.dropdown-item(href='#')
                             i.fa.fa-sign-out(aria-hidden='true')
                             |  로그아웃
-                        a.dropdown-item(href='#')
+                        a.dropdown-item(href='#', data-toggle='modal', data-target='#keywordModal')
                             i.fa.fa-keyboard-o(aria-hidden='true')
-                            |  키워드 설정
+                            |  차단할 키워드
             else
                 li.nav-item.active
                     a.nav-link(href='/login')

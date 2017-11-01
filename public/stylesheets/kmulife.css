@@ -10,14 +10,14 @@ body {
     width: 100%;
 }
 
-li.list-group-item:hover {
+li.list-group-item[href]:hover {
     z-index: 2;
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
 }
 
-li.list-group-item:focus {
+li.list-group-item[href]:focus {
     z-index: 2;
     color: #fff;
     background-color: #007bff;

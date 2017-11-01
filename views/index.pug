@@ -9,10 +9,32 @@ mixin post(title, links)
                     each link in links
                         li.list-group-item(href=link.url)= link.title
 
+mixin keyword(id, text)
+    li.list-group-item.d-flex.justify-content-between.align-items-center= text
+        button.close.remove_keyword(type='button')
+            i.fa.fa-trash-o(value=id, aria-hidden='true')
+
 block append javascripts
     script(src='/javascripts/list_click.js')
+    script(src='/javascripts/keyward_modal.js')
 
 block append contents
+    #keywordModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='keywordModalLabel', aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#keywordModalLabel.modal-title 차단할 키워드
+                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') ×
+                .modal-body
+                    .input-group
+                        input#keyword_input.form-control(type='text', placeholder='추가할 키워드', aria-label='추가할 키워드')
+                        span.input-group-btn
+                            button.btn.btn-primary.add_keyword(type='button')
+                                i.fa.fa-plus(aria-hidden='true')
+                    ul.list-group.keyword_list(style='margin-top: 10px;')
+                        each keyword in keywords
+                            +keyword(keyword.id, keyword.title)
     .container
         .row
             each result in results
