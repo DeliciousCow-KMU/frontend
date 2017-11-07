@@ -9,7 +9,7 @@ block append contents
             .card-header
                 | 로그인
             .card-body
-                form
+                form#login-form(method='post')
                     .form-group
                         label(for='generation') 학번
                         input#generation.form-control(type='number', name='generation', aria-describedby='emailHelp', placeholder='학번을 입력해주세요')

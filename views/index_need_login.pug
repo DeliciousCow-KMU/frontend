@@ -1,0 +1,10 @@
+extends templet
+
+block append javascripts
+    script(src='/javascripts/list_click.js')
+    script(src='/javascripts/keyward_modal.js')
+
+block append contents
+    .container
+        .alert.alert-danger(role='alert')
+            | 로그인을 해주시기 바랍니다.

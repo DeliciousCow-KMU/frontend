@@ -5,9 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var cookieSession = require('cookie-session');
+var flash = require('connect-flash');
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 var api = require('./routes/api');
+
+var auth = require('./auth/auth-passport');
 
 var app = express();
 
@@ -21,7 +26,19 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use(cookieSession({
+    keys: ['dongho_lab'],
+    cookie: {
+        maxAge: 100 * 60 * 60 // 쿠키 유효기간 1시간
+    }
+}));
+app.use(flash());
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+//인증시스템 분산
+auth.init(app);
 
 app.use('/', index);
 app.use('/users', users);
