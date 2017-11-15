@@ -63,6 +63,7 @@ exports.init = function(app) {
                                 return done(null, {
                                     id: result[0].id,
                                     username: result[0].username,
+                                    grade: result[0].grade,
                                     token: "0000000000",
                                     department: result[0].department
                                 });

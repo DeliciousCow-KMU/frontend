@@ -5,15 +5,13 @@ block append javascripts
 
 block append contents
     .container
-        .card
+        .card.text-center
             .card-header
-                | 로그인
+                | 마이페이지
             .card-body
-                form#login-form(method='post')
-                    .form-group
-                        label(for='generation') 학번
-                        input#generation.form-control(type='number', name='generation', aria-describedby='emailHelp', placeholder='학번을 입력해주세요')
-                    .form-group
-                        label(for='password') 비밀번호
-                        input#password.form-control(type='password', name='password' , placeholder='Password')
-                    button.btn.btn-primary.max(type='submit') 로그인
+                h4.card-title= user.username
+                p.card-text
+                | 학번 :
+                =user.id
+                br
+                = user.department + " " + user.grade + "학년"

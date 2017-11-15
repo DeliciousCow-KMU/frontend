@@ -4,6 +4,9 @@ var router = express.Router();
 var passport = require('passport');
 var auth = require('../auth/auth-passport');
 
+var mysql_dbc = require('../db/db_con')();
+var pool = mysql_dbc.init_pool();
+
 /* GET home page. */
 router.get('/', auth.isAuthenticated, function (req, res, next) {
     const datas = [
@@ -14,21 +17,38 @@ router.get('/', auth.isAuthenticated, function (req, res, next) {
                 title:'단과대 공지', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
             },
             {
-                title:'학부 공지', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
-            },
-            {
                 title:'푸쉬 받을 공지사항', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
             }
     ];
 
-    const keywords = [
-        {id: 0, title: '명월민속관'},
-        {id: 1, title: '외부'},
-        {id: 2, title: '홍보'}
-    ]
+    pool.getConnection(function(err, connection) {
+        if (err)
+            throw err;
+        else {
+            connection.query('select * from `Keywords` where `userid` = ?', req.user.id, function (err, keywords) {
+                if (err) {
+                    console.log('err :' + err);
+                    res.render('index', {title: 'KMULife', navbar: true, auth: req.isAuthenticated(), user: req.user, results: datas, keywords: []});
+                } else {
+                    if (keywords.length === 0) {
+                        console.log('저장된 키워드가 없습니다.');
+                        res.render('index', {title: 'KMULife', navbar: true, auth: req.isAuthenticated(), user: req.user, results: datas, keywords: []});
 
+                    } else {
+                        console.log(keywords);
+                        res.render('index', {title: 'KMULife', navbar: true, auth: req.isAuthenticated(), user: req.user, results: datas, keywords: keywords});
+                    }
+                }
+                connection.release();
+            });
+        }
+    });
 
-    res.render('index', {title: 'KMULife', navbar: true, auth: req.isAuthenticated(), user: {name: '강동호', number: 20163079}, results: datas, keywords: keywords});
+    // keywords = [
+    //     {id: 0, title: '명월민속관'},
+    //     {id: 1, title: '외부'},
+    //     {id: 2, title: '홍보'}
+    // ]
 });
 
 router.get('/need_login', function (req, res, next) {
@@ -83,6 +103,10 @@ router.post('/popup/login', function (req, res, next) {
 router.get('/logout', function (req, res) {
     req.logout();
     res.redirect(req.headers.referer);
+});
+
+router.get('/mypage', auth.isAuthenticated, function (req, res) {
+    res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated()});
 });
 
 module.exports = router;
