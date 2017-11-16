@@ -109,4 +109,25 @@ router.get('/mypage', auth.isAuthenticated, function (req, res) {
     res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated()});
 });
 
+router.delete('/leave', auth.isAuthenticated, function (req, res) {
+    pool.getConnection(function(err, connection) {
+        if (err)
+            throw err;
+        else {
+            console.log(req.body.id, req.user.id);
+            connection.query('DELETE FROM Users WHERE id = ?', req.user.id, function (err, results) {
+                if (err) {
+                    console.log('err :' + err);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.status(500).send(JSON.stringify({status: 'error'}));
+                } else {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.send(JSON.stringify({status: 'success', data: results}));
+                }
+                connection.release();
+            });
+        }
+    });
+});
+
 module.exports = router;
