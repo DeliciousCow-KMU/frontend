@@ -2,6 +2,7 @@ extends templet
 
 block append javascripts
     script(src='/javascripts/leave_button.js')
+    script(src="https://unpkg.com/axios/dist/axios.min.js")
 
 block append contents
     .container
@@ -16,4 +17,4 @@ block append contents
                 br
                 = user.department + " " + user.grade + "학년"
             .card-footer
-                a#leave.btn.btn-primary 회원탈퇴
+                a#leave.btn.btn-primary(style='width: 100%; color: white;') 회원탈퇴
