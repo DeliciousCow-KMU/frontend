@@ -4,6 +4,8 @@ var mysql_dbc = require('../db/db_con')();
 var pool = mysql_dbc.init_pool();
 var bcrypt = require('bcrypt');
 var url = require('url');
+var axios = require('axios');
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 var exports = module.exports = {};
 
@@ -41,35 +43,65 @@ exports.init = function(app) {
         passReqToCallback: true //인증을 수행하는 인증 함수로 HTTP request를 그대로  전달할지 여부를 결정한다
     }, function (req, generation, password, done) {
         pool.getConnection(function(err, connection) {
-            if (err)
+            if (err) {
                 throw err;
-            else {
-                connection.query('select * from `Users` where `id` = ?', generation, function (err, result) {
-                    connection.release();
-                    if (err) {
-                        console.log('err :' + err);
-                        return done(false, null);
-                    } else {
-                        if (result.length === 0) {
-                            console.log('해당 유저가 없습니다');
+                return done(false, null);
+            } else {
+                axios.post('https://1zi1pnd5vb.execute-api.ap-northeast-2.amazonaws.com/dev/auth', {
+                    user_id: generation,
+                    passwd: password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function (response) {
+                    connection.query('select * from `Users` where `id` = ?', generation, function (err, result) {
+                        connection.release();
+                        if (err) {
+                            console.log('err :' + err);
                             return done(false, null);
                         } else {
-                            // if (!bcrypt.compareSync(password, result[0].password)) {
-                            if(!password == result[0].password) {
-                                console.log('패스워드가 일치하지 않습니다');
-                                return done(false, null);
+                            if (result.length === 0) {
+                                //회원가입 처리
+                                connection.query('INSERT INTO Users (id, username, college, department) VALUES (?, ?, ?, ?)', [response.data.data.user_id, response.data.data.name, response.data.data.college, response.data.data.department], function (err, results) {
+                                    if (err) {
+                                        console.log('insert');
+                                        console.log('err :' + err);
+                                        return done(false, null);
+                                    } else {
+                                        return done(null, {
+                                            id: response.data.data.user_id,
+                                            username: response.data.data.name,
+                                            department: response.data.data.department,
+                                            college: response.data.data.college
+                                        });
+                                    }
+                                    connection.release();
+                                });
                             } else {
-                                console.log('로그인 성공');
-                                return done(null, {
-                                    id: result[0].id,
-                                    username: result[0].username,
-                                    grade: result[0].grade,
-                                    token: "0000000000",
-                                    department: result[0].department
+                                //회원정보 업데이트
+                                connection.query('UPDATE Users SET username=?, college=?, department=? where id=?', [response.data.data.name, response.data.data.college, response.data.data.department, response.data.data.user_id], function (err, results) {
+                                    if (err) {
+                                        console.log('update');
+                                        console.log('err :' + err);
+                                        return done(false, null);
+                                    } else {
+                                        return done(null, {
+                                            id: response.data.data.user_id,
+                                            username: response.data.data.name,
+                                            department: response.data.data.department,
+                                            college: response.data.data.college
+                                        });
+                                    }
+                                    connection.release();
                                 });
                             }
                         }
-                    }
+                    });
+                }).catch(function (error) {
+                    console.log('axios');
+                    console.log(error);
+                    return done(false, null);
                 });
             }
         });

@@ -17,26 +17,8 @@ mixin keyword(id, text)
 block append javascripts
     script(src='/javascripts/list_click.js')
     script(src='/javascripts/keyward_modal.js')
-    script(src="https://unpkg.com/axios/dist/axios.min.js")
 
 block append contents
-    #keywordModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='keywordModalLabel', aria-hidden='true')
-        .modal-dialog(role='document')
-            .modal-content
-                .modal-header
-                    h5#keywordModalLabel.modal-title 차단할 키워드
-                    button.close(type='button', data-dismiss='modal', aria-label='Close')
-                        span(aria-hidden='true') ×
-                .modal-body
-                    .input-group
-                        input#keyword_input.form-control(type='text', placeholder='추가할 키워드', aria-label='추가할 키워드')
-                        span.input-group-btn
-                            button#keyword_add.btn.btn-primary.add_keyword(type='button')
-                                i.fa.fa-plus(aria-hidden='true')
-                    #keyword_error.alert.alert-danger(role="alert", style='margin-top: 10px; display: none;')
-                    ul.list-group.keyword_list(style='margin-top: 10px;')
-                        each keyword in keywords
-                            +keyword(keyword.id, keyword.keyword)
     .container
         .row
             each result in results

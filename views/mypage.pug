@@ -11,10 +11,10 @@ block append contents
                 | 마이페이지
             .card-body
                 h4.card-title= user.username
-                p.card-text
-                | 학번 :
-                =user.id
-                br
-                = user.department + " " + user.grade + "학년"
+                p.card-text 학번 : #{user.id}
+                    br
+                    | 단과대학 : #{user.college}
+                    br
+                    | 학과 : #{user.department}
             .card-footer
                 a#leave.btn.btn-primary(style='width: 100%; color: white;') 회원탈퇴

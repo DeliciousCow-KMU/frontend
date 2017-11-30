@@ -106,7 +106,27 @@ router.get('/logout', function (req, res) {
 });
 
 router.get('/mypage', auth.isAuthenticated, function (req, res) {
-    res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated()});
+    pool.getConnection(function(err, connection) {
+        if (err)
+            throw err;
+        else {
+            connection.query('select * from `Keywords` where `userid` = ?', req.user.id, function (err, keywords) {
+                if (err) {
+                    console.log('err :' + err);
+                    res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated(), keywords: []});
+                } else {
+                    if (keywords.length === 0) {
+                        console.log('저장된 키워드가 없습니다.');
+                        res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated(), keywords: []});
+                    } else {
+                        console.log(keywords);
+                        res.render('mypage', {title: 'mypage', navbar: true, user: req.user, auth: req.isAuthenticated(), keywords: keywords});
+                    }
+                }
+                connection.release();
+            });
+        }
+    });
 });
 
 router.delete('/leave', auth.isAuthenticated, function (req, res) {
