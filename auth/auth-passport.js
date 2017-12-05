@@ -13,10 +13,10 @@ exports.isAuthenticated = function (req, res, next) {
     if (req.isAuthenticated())
         return next();
     else
-        if(req.params.repetition >= 1)
-            res.render('index_need_login');
-        else
-            res.render('open_popup');
+    if(req.params.repetition >= 1)
+        res.render('index_need_login');
+    else
+        res.render('open_popup');
 }
 
 exports.hash = function(data) {
