@@ -4,22 +4,37 @@ var router = express.Router();
 var passport = require('passport');
 var auth = require('../auth/auth-passport');
 
+var axios = require('axios');
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 var mysql_dbc = require('../db/db_con')();
 var pool = mysql_dbc.init_pool();
 
 /* GET home page. */
 router.get('/', auth.isAuthenticated, function (req, res, next) {
-    const datas = [
-            {
-                title:'학교 공지사항', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
-            },
-            {
-                title:'단과대 공지', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
-            },
-            {
-                title:'푸쉬 받을 공지사항', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
-            }
+    var datas = [
+        {
+            title:'학교 공지사항', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
+        },
+        {
+            title:'푸쉬 받을 공지사항', links: [{url: 'https://naver.com', title: '네이버'}, {url: 'https://daum.net', title: '다음'}, {url: 'https://google.com', title: '구글'}]
+        }
     ];
+
+    axios.post('https://1zi1pnd5vb.execute-api.ap-northeast-2.amazonaws.com/dev/service', {
+        api_id: 1,
+        department: req.user.college
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        data = {title:'단과대 공지', links: response.data};
+        datas.push(data);
+    }).catch(function (error) {
+        console.log('axios');
+        console.log(error);
+    });
 
     pool.getConnection(function(err, connection) {
         if (err)
